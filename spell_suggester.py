@@ -18,8 +18,8 @@ class SpellSuggester:
             node = node[l]
         node[None] = True
 
-    def suggestions(self, word):
-        corrections = set(self.find_similar(word,3))
+    def suggestions(self, word, **kwargs):
+        corrections = set(self.find_similar(word, **kwargs))
         sorted_corrections = self.sort_by_freq(corrections)
         return  sorted_corrections
 

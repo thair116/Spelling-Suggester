@@ -18,7 +18,7 @@ def main():
             reader = csv.reader(f)
             for row in reader:
                 word = row[0].lower()
-                suggestions = t.suggestions(word)
+                suggestions = t.suggestions(word, max_dist = 3)
                 # out.write("* " + word + ": " + str(suggestions) + "\n")
                 print "* " + word + ": " + str(suggestions)
 
