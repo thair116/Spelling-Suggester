@@ -1,0 +1,216 @@
+import operator
+import csv
+from pybloom import BloomFilter
+from array import array
+import math
+
+
+class SpellSuggester:
+
+    def __init__(self):
+        # dictionary stores word,frequency pairs
+        # if a word does not exist in the dictionary, it is not a valid word
+        self.dict = {}
+        # the set of characters available for addition and substitution
+        # alphabet = "abcdefghijklmnopqrstuvwxyz'-"
+        self.alphabet = array('c', "abcdefghijklmnopqrstuvwxyz'-")
+        self.s = BloomFilter(capacity=2000000, error_rate=0.00001)
+
+    def add_to_dict(self, word, freq):
+        # self.dict[word] = freq
+        int = self.hash_array(word)
+        # if not int in self.s:
+        #     print int
+        #     print "---- not already in the filter"
+        # if int ==  5066288785950018361:
+        #     print word
+        # if  int in self.s:
+        #     print int
+        #     print "---- already in the filter"
+
+        self.s.add(int)
+
+    def hash_array(self,array):
+        ret = 2
+        x = 0
+        for i in array:
+            x += 1
+            ret = ((math.pow(35,x) %  95001836) * hash(i) * ret) %  95001836
+        return ret
+
+    # takes a word
+    # returns true if the word exists in the dictionary
+    def defined(self, word):
+        # print word.__class
+        # int = self.hash_array(word)
+        # if int in self.s:
+        #     print word
+        #     print "============="
+
+        return self.hash_array(word) in self.s
+
+    # takes a word
+    # returns the full set of strings with a Levenshtien distance = 1
+    def edit_1(self, word, length):
+        splits = self.splits(word, length)
+        # self.deletions(splits)._class
+        # join insertions to deletions, then join changes to that
+        # ret = set(self.deletions(splits).update(self.insertions(splits)).update(self.changes(splits)))
+        ret = self.deletions(splits) + self.insertions(splits,length) + self.changes(splits, length)
+        # print ret.to_i
+        # ret.update(self.insertions(splits))
+        # ret.update(self.changes(splits))
+        # still a set her
+        # print ret.__cls
+
+        # print ret.__cls
+        # for i in ret:
+            # print i.__cls
+        return ret
+
+    def splits(self, word, length):
+        # now instead of a string tuple, I have an array tuple
+        return [(word[:i], word[i:]) for i in range(length + 1)]
+
+    def deletions(self, splits):
+        return [a + b[1:] for a,b in splits if b]
+
+    def insertions(self,splits,length):
+        ret = []
+        for a,b in splits:
+            for i in range(length + 1):
+            # for c in self.alphabet:
+                c = self.alphabet[i:i+1]
+                ret.append(a + c + b)
+                # print c.to_i
+                # print b
+                # print c.to_i
+        # ret =   [a + c + b for a,b in splits for c in self.alphabet]
+        return ret
+
+    def changes(self,splits, length):
+        ret = []
+        for a,b in splits:
+            for i in range(length + 1):
+            # for c in self.alphabet:
+                c = self.alphabet[i:i+1]
+                if b and b[0] != c:
+                    ret.append(a + c + b[1:])
+        return ret
+        # return [a.__cls + c + b[1:] for a, b in splits for c in self.alphabet if b and b[0] != c]
+
+    # def edit_2(self, words):
+    #     splits = self.splits(word)
+    #     set(e2 for e1 in edit_1_precheck for e2 in self.edit_1(e1) if self.defined(e2))
+    #     # return sets of hashes instead of strings
+    #     # because ints take up less memory
+    #     return set(self.deletions_2(splits) + self.insertions_2(splits) + self.changes(splits_2))
+    #
+    # def deletions_2(self, splits):
+    #     return [a + b[1:] for a,b in splits if b]
+    #
+    # def insertions_2(self,splits):
+    #     return  [a + c + b for a,b in splits for c in self.alphabet]
+    #
+    # def changes_2(self,splits):
+    #     return [a + c + b[1:] for a, b in splits for c in self.alphabet if b and b[0] != c]
+
+
+
+    # takes a word
+    # returns a set of correct words with a Levenshtien distance <= 2
+    def candidates(self, word, length):
+        edit_1_precheck = self.edit_1(word, length)
+        edit_2 = set((e2.tostring()) for e1 in edit_1_precheck for e2 in self.edit_1(e1,length) if self.defined(e2))
+        candidates = set(e1.tostring() for e1 in edit_1_precheck if self.defined(e1))
+        candidates.update(edit_2)
+        return candidates
+
+
+    # take a word
+    # return a list of possible corrections, sorted desc by frequency
+    def corrections(self, word, length):
+        candidates = self.candidates(word, length)
+        corrections = {}
+        for word in candidates:
+            print word
+            # corrections[word] = self.dict[word]
+        sorted_corrections = sorted(corrections.iteritems(), key=operator.itemgetter(1), reverse=True)
+        return [k for k,v in sorted_corrections]
+
+# Should have a class for each individual word, instead of just the spell suggester
+# then I could instantiate a new instance for each new word, and save @word and @length to avoid having to pass them around
+
+
+# read in word frequency and build dictionary
+def run():
+  s = SpellSuggester()
+  dict_name = "word_frequency.csv"
+  query_name = "misspelled_queries.csv"
+
+  stop = 0
+
+  with open(dict_name) as f:
+      reader = csv.reader(f)
+      for row in reader:
+          word = row[0].lower()
+          word_eff = array('c', word)
+          freq = row[1]
+          s.add_to_dict(word_eff, freq)
+          stop += 1
+          # if stop > 5000:
+          #     print stop.to_i
+
+  with open(query_name) as f:
+      reader = csv.reader(f)
+      for row in reader:
+          word = row[0].lower()
+          word_eff = array('c', word)
+          print "* " + word + ": " + str(s.corrections(word_eff, len(word)))
+
+
+import unittest
+
+class TestSpellSuggester(unittest.TestCase):
+
+    def setUp(self):
+        self.s = SpellSuggester()
+
+    def test_add_to_dict(self):
+        self.s.dict = {}
+        word, freq = ['test', 20]
+        self.s.add_to_dict(word,freq)
+        dict = {}
+        dict['test'] = 20
+        self.assertEqual(self.s.dict, dict)
+
+    def test_defined(self):
+        self.s.dict = {}
+        self.s.dict['test'] = 20
+        self.assertEqual(self.s.defined('test'), True)
+        self.assertEqual(self.s.defined('not'), False)
+
+    def test_splits(self):
+        word = 'test'
+        splits = [('', 'test'), ('t', 'est'), ('te', 'st'), ('tes', 't'), ('test', '')]
+        self.assertEqual(self.s.splits(word), splits)
+
+    def test_deletions(self):
+        splits = [('', 'test'), ('t', 'est'), ('te', 'st'), ('tes', 't'), ('test', '')]
+        deletions = ['est', 'tst', 'tet', 'tes']
+        self.assertEqual(self.s.deletions(splits), deletions)
+
+    def test_changes(self):
+        splits = [('', 'test'), ('t', 'est'), ('te', 'st'), ('tes', 't'), ('test', '')]
+        changes = ['aest', 'best', 'cest', 'dest', 'eest', 'fest', 'gest', 'hest', 'iest', 'jest', 'kest', 'lest', 'mest', 'nest', 'oest', 'pest', 'qest', 'rest', 'sest', 'uest', 'vest', 'west', 'xest', 'yest', 'zest', "'est", '-est', 'tast', 'tbst', 'tcst', 'tdst', 'tfst', 'tgst', 'thst', 'tist', 'tjst', 'tkst', 'tlst', 'tmst', 'tnst', 'tost', 'tpst', 'tqst', 'trst', 'tsst', 'ttst', 'tust', 'tvst', 'twst', 'txst', 'tyst', 'tzst', "t'st", 't-st', 'teat', 'tebt', 'tect', 'tedt', 'teet', 'teft', 'tegt', 'teht', 'teit', 'tejt', 'tekt', 'telt', 'temt', 'tent', 'teot', 'tept', 'teqt', 'tert', 'tett', 'teut', 'tevt', 'tewt', 'text', 'teyt', 'tezt', "te't", 'te-t', 'tesa', 'tesb', 'tesc', 'tesd', 'tese', 'tesf', 'tesg', 'tesh', 'tesi', 'tesj', 'tesk', 'tesl', 'tesm', 'tesn', 'teso', 'tesp', 'tesq', 'tesr', 'tess', 'tesu', 'tesv', 'tesw', 'tesx', 'tesy', 'tesz', "tes'", 'tes-']
+        self.assertEqual(self.s.changes(splits), changes)
+
+    def test_additions(self):
+        splits = [('', 'test'), ('t', 'est'), ('te', 'st'), ('tes', 't'), ('test', '')]
+        insertions = ['atest', 'btest', 'ctest', 'dtest', 'etest', 'ftest', 'gtest', 'htest', 'itest', 'jtest', 'ktest', 'ltest', 'mtest', 'ntest', 'otest', 'ptest', 'qtest', 'rtest', 'stest', 'ttest', 'utest', 'vtest', 'wtest', 'xtest', 'ytest', 'ztest', "'test", '-test', 'taest', 'tbest', 'tcest', 'tdest', 'teest', 'tfest', 'tgest', 'thest', 'tiest', 'tjest', 'tkest', 'tlest', 'tmest', 'tnest', 'toest', 'tpest', 'tqest', 'trest', 'tsest', 'ttest', 'tuest', 'tvest', 'twest', 'txest', 'tyest', 'tzest', "t'est", 't-est', 'teast', 'tebst', 'tecst', 'tedst', 'teest', 'tefst', 'tegst', 'tehst', 'teist', 'tejst', 'tekst', 'telst', 'temst', 'tenst', 'teost', 'tepst', 'teqst', 'terst', 'tesst', 'tetst', 'teust', 'tevst', 'tewst', 'texst', 'teyst', 'tezst', "te'st", 'te-st', 'tesat', 'tesbt', 'tesct', 'tesdt', 'teset', 'tesft', 'tesgt', 'tesht', 'tesit', 'tesjt', 'teskt', 'teslt', 'tesmt', 'tesnt', 'tesot', 'tespt', 'tesqt', 'tesrt', 'tesst', 'testt', 'tesut', 'tesvt', 'teswt', 'tesxt', 'tesyt', 'teszt', "tes't", 'tes-t', 'testa', 'testb', 'testc', 'testd', 'teste', 'testf', 'testg', 'testh', 'testi', 'testj', 'testk', 'testl', 'testm', 'testn', 'testo', 'testp', 'testq', 'testr', 'tests', 'testt', 'testu', 'testv', 'testw', 'testx', 'testy', 'testz', "test'", 'test-']
+        self.assertEqual(self.s.insertions(splits), insertions)
+
+
+# unittest.main()
+
+run()
