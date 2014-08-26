@@ -70,7 +70,7 @@
       <file leaf-file-name="spell_suggester.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spell_suggester.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="130" column="46" selection-start="0" selection-end="9082" vertical-scroll-proportion="0.51557094">
+            <state line="43" column="65" selection-start="28" selection-end="3580" vertical-scroll-proportion="-0.6089965">
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -405,12 +405,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/spell_suggester.py</url>
-          <line>86</line>
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="1" />
     </breakpoint-manager>
   </component>
@@ -443,7 +437,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spell_suggester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="46" selection-start="0" selection-end="9082" vertical-scroll-proportion="0.51557094">
+        <state line="43" column="65" selection-start="28" selection-end="3580" vertical-scroll-proportion="-0.6089965">
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
