@@ -4,7 +4,7 @@
     <list default="true" id="1c874c6f-0817-41fd-9c46-958c59293c98" name="Default" comment="" />
     <ignored path="Fluencia.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/spell_suggester.py" changelist="1c874c6f-0817-41fd-9c46-958c59293c98" time="1409016396522" ignored="false" />
+    <file path="/spell_suggester.py" changelist="1c874c6f-0817-41fd-9c46-958c59293c98" time="1409023502374" ignored="false" />
     <file path="/a.java" changelist="1c874c6f-0817-41fd-9c46-958c59293c98" time="1408934467932" ignored="false" />
     <file path="/a.py" changelist="1c874c6f-0817-41fd-9c46-958c59293c98" time="1408945765123" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -70,7 +70,7 @@
       <file leaf-file-name="spell_suggester.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spell_suggester.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="65" selection-start="28" selection-end="3580" vertical-scroll-proportion="-0.6089965">
+            <state line="35" column="35" selection-start="1094" selection-end="1094" vertical-scroll-proportion="0.42045453">
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -437,7 +437,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spell_suggester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="65" selection-start="28" selection-end="3580" vertical-scroll-proportion="-0.6089965">
+        <state line="35" column="35" selection-start="1094" selection-end="1094" vertical-scroll-proportion="0.42045453">
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
